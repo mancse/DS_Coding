@@ -2,17 +2,34 @@ package Stack;
 
 import java.util.Stack;
 /**
- * Idea is to maintain two stacks. One is for braces (storing open braces) and other is for storing string index of the particulr braces.
+ * https://leetcode.com/problems/longest-valid-parentheses/description/
+ *
+ * Given a string containing just the characters '(' and ')', return the length of the longest valid
+ * (well-formed) parentheses
+ * substring
+ * Example 1:
+ *
+ * Input: s = "(()"
+ * Output: 2
+ * Explanation: The longest valid parentheses substring is "()".
+ * Example 2:
+ *
+ * Input: s = ")()())"
+ * Output: 4
+ * Explanation: The longest valid parentheses substring is "()()".
+ *
+ * Idea is to maintain two stacks. One is for braces (storing open braces) and other is for storing
+ * string index of the particulr braces.
  * a. Put -1 initially in the index stack. 
  * b. Iterate over string character and check 
  *    --if it is equal to '('
- *    	push open bracket in the character stack and index of that bracket inside index stack.
- *    --Else
- *     		 Check if character stack is not empty
- *      			pop entries from both the stack
- *           		Also. calculate max length till now, by comparing previous max length and difference of current index i and peek() of index stack.
- *           If character stack is empty
- *                  push current index into integer stack. 
+ *    	Push the index of open braces in the stack.
+ *    --Else -- it is equal to ')'
+ *      a. Then pop index from the stack
+ *      b. Check if stack is empty. If it is empty then push the index of closing parenthesis into stack
+ *         so that it ensure new marker and after this index new valid parethesis substring can be found.
+ *      c. Else if stack is not empty then take difference of (i - stack.peek()) and keep on storing
+ *         maximum as result.
  *                   	
  * @author Manoj.K
  *
@@ -26,39 +43,24 @@ public class LongestValidParenthesis
 	}
 	public static int longestValidParentheses(String s) 
     {
-        Stack<Character> cst = new Stack<>();
         Stack<Integer> ist = new Stack<>();
-        /**
-         * Insert -1 in the ist stack initially to avoid empty stack exception in case stack.peek() is called and there is no valid entry (i.e no index of 
-         * open or close braces present in the stack.)
-         * 
-         */
-        ist.push(-1);
+        ist.push(-1); //Base case as marker
         int res = 0;
-        for (int i=0; i<s.length();i++)
-        {
-            char c = s.charAt(i);
-            if (c == '(')
-            {
-                cst.push(c);
+        for (int i=0; i<s.length(); i++){
+            if (s.charAt(i) == '('){
                 ist.push(i);
             }
-            else
-            {
-                if (!cst.isEmpty())
-                {
-                    cst.pop();
-                    ist.pop();
-                    
-                    if (i - ist.peek() > res){
-                    	res = i - ist.peek();
-                    	System.out.println("ist.peek(): "+ist.peek());
-                    	System.out.println("string:  "+s.substring(i+1-res, i+1));
-                    }
-                }
-                else
-                {
+            else{
+                //If there is closing braces then pop the index of matching opening braces.
+                ist.pop();
+                if (ist.isEmpty()){
+                    //If index stack is empty then push the index of closing braces in the stack so
+                    // that substring after the current closing braces should be considered as
+                    // candidate for new valid string.
                     ist.push(i);
+                }
+                else{
+                    res = Math.max(res, (i-ist.peek()));
                 }
             }
         }
