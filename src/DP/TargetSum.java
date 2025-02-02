@@ -1,108 +1,39 @@
-package DP;
+class Solution {
+    public int findTargetSumWays(int[] nums, int target) {
+        int sum = 0; 
+        for (int num : nums) {
+            sum += num;
+        }
+        
+        // Edge case: If (sum + target) is odd or target is too large
+        if ((sum + target) % 2 != 0 || Math.abs(target) > sum) {
+            return 0;
+        }
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+        // Compute P = (sum + target) / 2
+        int P = (sum + target) / 2;
 
-/**
- * You are given a list of non-negative integers, a1, a2, ..., an, and a target, S. Now you have 2 symbols + and -. For each integer, you should choose one from + and - as its new symbol.
- * Find out how many ways to assign symbols to make sum of integers equal to target S.
- * 
- * Example: 
- * Input: nums is [1, 1, 1, 1, 1], S is 3. 
- * Output: 5
- * Explanation: 
+        // DP table where dp[i][j] is number of subsets using first i elements with sum j
+        int[][] dp = new int[nums.length + 1][P + 1];
 
- * -1+1+1+1+1 = 3
- * +1-1+1+1+1 = 3
- * +1+1-1+1+1 = 3
- * +1+1+1-1+1 = 3
- * +1+1+1+1-1 = 3
+        // Base case: There is one way to form sum 0 (by choosing no elements)
+        for (int i = 0; i <= nums.length; i++) {
+            dp[i][0] = 1;
+        }
 
-There are 5 ways to assign symbols to make the sum of nums be target 3.
- * @author Manoj.K
- *
- */
-public class TargetSum 
-{
-   public static void main(String args[])
-   {
-	   int input[] = {17,2,1,20,17,36,6,47,5,23,19,9,4,26,46,41,12,11,12,8};
-	   	   
-	   /*
-	    * Take the column size 1001 because sum of the array can't exceeds 1000
-	    */
-	   int[][] memo = new int[input.length][2001];
-       for (int[] row: memo)
-           Arrays.fill(row, Integer.MIN_VALUE);
-	   
-	   int res1 = targetSumDP(input,0,26,new HashMap<String,Integer>());
-	   System.out.println("Number of ways using DP: "+res1);	
-   }
-      
-   private static int targetSumDP(int input[],int start,int sum,Map<String,Integer> store)
-   {	
-	   String key = start+"_"+sum;
-	   
-	   if (store.containsKey(key))
-		   return store.get(key);
-	   
-	   if (input == null || input.length ==0)
-	   {
-		   return -1;
-	   }
-		   
-	   if (sum == 0 && start == input.length)
-	   {
-		   return 1;
-	   }
-	   
-	   if (start >= input.length)
-		   return 0;
-	   
-	   System.out.println(" Start: "+start+" Sum: "+sum);
-	      
-	   /*
-	    * This condition is required because we don't have to memorize negative sum. 
-	    */
-	   int res = targetSumDP(input,start+1,sum-input[start],store) + targetSumDP(input,start+1,sum+input[start],store);
-	   store.put(key, res);
-	   return res;
-   }
-   
-   
-   private static int targetSumDP1(int input[],int start,int sum,int memo[][])
-   {	    
-	   if (input == null || input.length ==0)
-	   {
-		   return -1;
-	   }
-		   
-	   if (sum == 0 && start == input.length)
-	   {
-		   return 1;
-	   }
-	   
-	   if (start >= input.length)
-		   return 0;
-	   
-	   System.out.println(" Start: "+start+" Sum: "+sum);
-	   
-	   /*
-	    * If we have already got the positive or 0 value stored in memo array then just return it. 
-	    */
-	   if (memo[start][sum+1000] > Integer.MIN_VALUE)
-	   {
-		   System.out.println("Memorization: "+memo[start][sum+1000]);
-		   return memo[start][sum+1000];
-	   }
-		   
-	   /*
-	    * This condition is required because we don't have to memorize negative sum. 
-	    */
-	   Map<String,Integer> store = new HashMap<String,Integer>();
-	   memo[start][sum+1000] = targetSumDP1(input,start+1,sum-input[start],memo) + targetSumDP1(input,start+1,sum+input[start],memo);
-	   
-	   return memo[start][sum+1000];
-   }
+        // Fill DP table
+        for (int i = 1; i <= nums.length; i++) {
+            for (int j = 0; j <= P; j++) {
+                // Exclude current element
+                dp[i][j] = dp[i - 1][j];
+
+                // Include current element if it's not greater than target sum j
+                if (j >= nums[i - 1]) {
+                    dp[i][j] += dp[i - 1][j - nums[i - 1]];
+                }
+            }
+        }
+
+        return dp[nums.length][P];
+    }
 }
