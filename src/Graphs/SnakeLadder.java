@@ -4,7 +4,7 @@ class Solution {
     public int snakesAndLadders(int[][] board) {
         int[] oneDBoard = convertToOneDBoard(board);
         Set<Integer> visited = new HashSet<>();
-        int n = board.length;
+        int n = oneDBoard.length;
         //Queue element is 2 length array where first index contains current position and second index is the moves. 
         Queue<int[]> queue = new LinkedList<>();
         queue.offer(new int[]{1,0});
@@ -17,22 +17,23 @@ class Solution {
                 int[] elem = queue.poll();
                 int currPos = elem[0];
                 int move = elem[1];
-
-                if (currPos == n * n){
+                
+                //If alrady reached to last index of the flattened array it means target end cell reached. 
+                if (currPos == n-1){
                     return move;
                 }
 
                 for (int dice=1; dice<=6; dice++){
                     int nextPos = currPos + dice;
-                    //Valid range of position is between 1 to n*n
-                    if (nextPos <= n * n){
+                    //Valid range of position.  
+                    if (nextPos < n){
                         //This is to jump to snake or ladder position. So, nextPos will change accordingly.
-                        if (oneDBoard[nextPos] != -1){
+                        if (oneDBoard[nextPos] > 0){
                             nextPos = oneDBoard[nextPos];
                         }
 
-                        //Again check if nextPos is under valid range. 
-                        if (nextPos <= n * n && !visited.contains(nextPos)){
+                        //Again Valid range of position.
+                        if (nextPos < n && !visited.contains(nextPos)){
                             visited.add(nextPos);
                             queue.offer(new int[]{nextPos, move + 1});
                         }
