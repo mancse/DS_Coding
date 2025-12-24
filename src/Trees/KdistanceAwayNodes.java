@@ -20,102 +20,55 @@ import java.util.List;
  */
 public class KdistanceAwayNodes {
 	
-	public static List<TreeNode> nodeToRootPaths;
-	
-	static class TreeNode
-	{
-		int val;
-		TreeNode left;
-		TreeNode right;
-		
-		public TreeNode(int val)
-		{
-			this.val = val;
-		}
-	}
-	
-	public static void main(String args[]){
-		TreeNode root= new TreeNode(1);
-    	root.left = new TreeNode(2); 
-        root.right = new TreeNode(3); 
-        root.left.left = new TreeNode(4); 
-        root.left.right = new TreeNode(5); 
-        root.right.left = new TreeNode(6); 
-        root.right.right = new TreeNode(7); 
-        root.left.left.left = new TreeNode(8);
-        root.left.left.right = new TreeNode(9);
-        root.right.right.left = new TreeNode(10); 
-        root.right.right.right = new TreeNode(11); 
-        nodeToRootPaths = new ArrayList<>();
-        printKDistanceAwayNodes(root,2,2);
-	}
-	
-	private static void printKDistanceAwayNodes(TreeNode root, int val, int k)
-	{
-		findNodeToRootPaths(root,val);
-		System.out.println("Node to root path: ");
-		for (TreeNode node : nodeToRootPaths) {
-			System.out.print(" "+node.val);
-		}
-		System.out.println("\n All "+k+" th distance nodes are: ");
-		for (int i=0; i < nodeToRootPaths.size(); i++)
-		{
-			/**
-			 * Idea behind blocker node is to restrict those nodes which have already printed by child node before by printKDistanceDownNodes() function.
-			 */
-			TreeNode blocker = i == 0 ? null : nodeToRootPaths.get(i-1);
-			printKDistanceDownNodes(nodeToRootPaths.get(i),k-i,blocker);
-		}
-	}
-	/**
-	 * Function to get list of nodes from given node to the root node of the binary tree. 
-	 * @param root
-	 * @param val
-	 * @return
-	 */
-	private static boolean findNodeToRootPaths(TreeNode root, int val)
-	{
-		if (root == null)
-		   return false;
-		
-		if (root.val == val)
-		{
-			nodeToRootPaths.add(root);
-			return true;
-		}
-		
-		boolean lf = findNodeToRootPaths (root.left,val);
-		boolean rf = findNodeToRootPaths(root.right,val);
-		
-		if (lf)
-		{
-			nodeToRootPaths.add(root);
-			return lf;
-		}
-		else if (rf)
-		{
-			nodeToRootPaths.add(root);
-			return rf;
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * Print all nodes at kth distance from the given node root
-	 * @param root
-	 * @param k
-	 * @param blocker
-	 */
-	private static void printKDistanceDownNodes(TreeNode root, int k,TreeNode blocker)
-	{
-		if (root == null || k < 0 || root == blocker)
-			return;
-		if (k == 0)
-		{
-			System.out.print(" "+root.val);
-		}
-		printKDistanceDownNodes(root.left,k-1,blocker);
-		printKDistanceDownNodes(root.right,k-1,blocker);
-	}
+	public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
+        List<Integer> res = new ArrayList<>();
+        List<TreeNode> path = new ArrayList<>();
+        rootToNodePath(root, target,path);
+        TreeNode blocked = null;
+        for (int i=path.size() -1; i >= 0; i--){
+            TreeNode node = path.get(i);
+            List<Integer> list = new ArrayList<>();
+            int distFromTarget = path.size() - 1 - i;
+            kDistDownNodes(node,k - distFromTarget,list,blocked);
+            res.addAll(list);
+            blocked = node;
+        }
+        return res;
+    }
+    private void kDistDownNodes(TreeNode root, int k,List<Integer> list, TreeNode blocked){
+        if (root == null || root == blocked || k < 0){
+            return;
+        }
+        if (k == 0){
+            list.add(root.val);
+        }
+        kDistDownNodes(root.left, k-1, list,blocked);
+        kDistDownNodes(root.right, k-1, list,blocked);
+    }
+    private boolean rootToNodePath(TreeNode root, TreeNode target, List<TreeNode> list){
+        if (root == null){
+            return false;
+        }
+        
+        //Add the node in the path. 
+        list.add(root);
+
+        if (root.val == target.val){
+           //If path found return
+           return true;
+        }
+        
+        boolean left = rootToNodePath(root.left,target,list);
+        boolean right = rootToNodePath(root.right, target, list);
+        
+        //Return true if path found in left or right recursion
+        if (left || right){
+            return true;
+        } 
+        
+        //Backtrack if path not found. 
+        list.remove(list.size()-1);
+        
+        return false;
+    }
 }
