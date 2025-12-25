@@ -7,7 +7,7 @@
        So, input [1,1,2,1,1] will be transformed to [1,1,0,1,1]
     2. Now, problem is simplified to find the numbers of continuous subarrays whoes sum equals to K. 
  */
-class Solution {
+class CountNumberOfNiceSubArrays {
     public int numberOfSubarrays(int[] nums, int k) {
          //Convert
          for (int i=0; i<nums.length; i++){
