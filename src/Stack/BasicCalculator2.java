@@ -1,9 +1,9 @@
 /**
- ** Idea: While scaning the input expression, if digit then form the number and once operator is encountered, push the number in the stack based on last operator and not on current operator. So, if last operator is + or - then push in stack with it's sign else if last operator is * or / then pop from stack to get previous number and apply * or / with current number and push again in the stack. 
-
-When new operator is encountered, save it as last operator to be evaluated later. 
-
-Also, evaluate operator calculation on last of the string. 
+ ** Problem: https://leetcode.com/problems/basic-calculator-ii/
+ ** Idea: While scaning the input expression, if digit then form the number and once operator is encountered, push the number in the stack based on last operator and not 
+ ** on current operator. So, if last operator is + or - then push in stack with it's sign else if last operator is * or / then pop from stack to get previous number and 
+ ** apply * or / with current number and push again in the stack. When new operator is encountered, save it as last operator to be evaluated later. Also, evaluate operator
+ ** calculation on last of the string. 
  */
 
 class Solution {
