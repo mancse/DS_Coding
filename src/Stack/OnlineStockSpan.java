@@ -3,23 +3,18 @@
 */
 
 class StockSpanner {
-    Stack<int[]> st; 
+    //Stack of tuple of price and span. 
+    Stack<int[]> st;
     public StockSpanner() {
         st = new Stack<>();
     }
     
     public int next(int price) {
         int span = 1;
-        
         while(!st.isEmpty() && st.peek()[0] <= price){
-            span += st.peek()[1];
-            st.pop();
+            span += st.pop()[1];
         }
-        
-        int[] elem = new int[2];
-        elem[0] = price;
-        elem[1] = span;
-        st.add(elem);
+        st.push(new int[]{price,span});
         return span;
     }
 }
