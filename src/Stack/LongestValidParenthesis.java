@@ -18,18 +18,15 @@ import java.util.Stack;
  * Output: 4
  * Explanation: The longest valid parentheses substring is "()()".
  *
- * Idea is to maintain two stacks. One is for braces (storing open braces) and other is for storing
- * string index of the particulr braces.
- * a. Put -1 initially in the index stack. 
- * b. Iterate over string character and check 
- *    --if it is equal to '('
- *    	Push the index of open braces in the stack.
- *    --Else -- it is equal to ')'
- *      a. Then pop index from the stack
- *      b. Check if stack is empty. If it is empty then push the index of closing parenthesis into stack
- *         so that it ensure new marker and after this index new valid parethesis substring can be found.
- *      c. Else if stack is not empty then take difference of (i - stack.peek()) and keep on storing
- *         maximum as result.
+ * Idea: Use a stack to store indices.
+ * Push -1 initially as a base for length calculation.
+ * When '(' → push its index.
+ * When ')':
+ * pop once
+ * if stack becomes empty → push current index (new base)
+ * else → calculate length = i - stack.peek()
+ * Why -1?
+ * It helps calculate valid length when the substring starts at index 0.
  *                   	
  * @author Manoj.K
  *

@@ -65,29 +65,19 @@ public class SubArraySumEqualsK
 	 * loop ends
 	 * return result = 1
 	 */
-	public static int subarraySum(int[] nums, int k) 
-    {
-		    int sum =0; 
-	        int result =0;
-	        
-	        Map<Integer,Integer> map = new HashMap<Integer,Integer>();
-	        
-	        /*
-	         * Following entry means sum=0 has count=1 
-	         */
-	        map.put(0,1);
-	        
-	        for (int i=0; i<nums.length; i++)
-	        {
-	            sum = sum + nums[i];
-	            
-	            if (map.containsKey(sum-k))
-	            {
-	            	result = result + map.get(sum-k);
-	            }
-	            int cnt = map.get(sum) != null ? (Integer) map.get(sum) : 0;
-	            map.put(sum,cnt + 1);
-	        }
-	        return result;
+	public int subarraySum(int[] nums, int k) {
+        Map<Integer,Integer> map = new HashMap<>();
+        //Base case to set sum=0 with frequency 1
+        map.put(0,1);
+        int sum=0;
+        int count = 0;
+        for (int i=0; i<nums.length; i++){
+            sum += nums[i];
+            //If sum-k is present in the map then add their frequencies as part of result. 
+            count += map.getOrDefault(sum-k,0);
+            //Else set prefix sum vs frequencies in the map 
+            map.put(sum, map.getOrDefault(sum, 0)+1);
+        }
+        return count;
     }
 }

@@ -21,11 +21,11 @@ package DP;
  */
 public class LongestCommonSubsequence 
 {
-	public static int longestCommonSubsequence(String text1, String text2) 
+	public static void longestCommonSubsequence(String text1, String text2) 
     {
         int dp[][] = new int[text1.length() + 1][text2.length() + 1];
         
-        int result =0;
+        int lcs =0;
         
         for (int i = 1; i < dp.length; i++)
         {
@@ -51,15 +51,45 @@ public class LongestCommonSubsequence
                     dp[i][j] = Math.max(dp[i][j-1],dp[i-1][j]);
                 }
                 
-                result = Math.max(result,dp[i][j]);
+                lcs = Math.max(lcs,dp[i][j]);
+                System.out.println("lcs: "+lcs);
             }
         }
-        return result;
+        findLongestCommonSubsequenceString(text1, text2, dp);
     }
+
+
+	private static void findLongestCommonSubsequenceString(String text1, String text2, int[][] dp) {
+		StringBuilder sb = new StringBuilder();
+        int i= text1.length(), j=text2.length();
+        while (i >=1 && j >=1)
+        {
+        	  //Traverse DP table from end and check if character of two string matches then 
+        	  //traverse diagonally backward else if dp[i-1][j] >= dp[i][j-1] then check decrement i (i.e find in text1)
+        	  // else decrement j i.e check in text2.  
+              if (text1.charAt(i-1) == text2.charAt(j-1))
+              {
+                sb.append(text1.charAt(i-1));
+                i--;
+                j--;
+              }
+              else
+              {
+                if (dp[i-1][j] >= dp[i][j-1])
+                {
+                  i--;
+                }
+                else
+                {
+                  j--;
+                }
+              }
+        }
+        System.out.println("LCS String: "+sb.reverse().toString());
+	}
 	
 	
 	public static void main(String args[]){
-		int result = longestCommonSubsequence("abcde","ace");
-		System.out.println("Longest common subsequence: "+result);
+		longestCommonSubsequence("abcde","ace");
 	}
 }

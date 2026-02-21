@@ -6,9 +6,11 @@ import java.util.Map;
  * Given an array of positive and negative numbers. Find if there is a subarray exists whose sum is equal to
  * given sum. 
  * 
+ * Note: This is same as Prefix sum problem - SubArraySumK
  * Idea behind this is to maintain a map of key-value where key is the value of the current sum so far
  * which is calculated as sum of elements of array and value is the current index value. Now following 
  * conditions can happen.
+
  * 1. if currSum - given sum = 0: It means desired sum is achieved from start index
  * 2. if currSum - given sum exists in the map, It means element at array index against the value of
  *    (currSum - given sum) should not be part of the sub-array. So ignore that index element from

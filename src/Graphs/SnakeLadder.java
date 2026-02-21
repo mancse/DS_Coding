@@ -1,47 +1,53 @@
-package Graphs;
-
 import java.util.*;
 
-class SnakeLadder {
+class Solution {
     public int snakesAndLadders(int[][] board) {
-        int n = board.length;
         int[] oneDBoard = convertToOneDBoard(board);
-        Queue<Integer> queue = new LinkedList<>();
-        boolean[] visited = new boolean[n * n];
-        queue.offer(0);
-        visited[0] = true;
-        int rolls = 0;
+        Set<Integer> visited = new HashSet<>();
+        int n = oneDBoard.length;
+        //Queue element is 2 length array where first index contains current position and second index is the moves. 
+        Queue<int[]> queue = new LinkedList<>();
+        queue.offer(new int[]{1,0});
+        visited.add(1);
 
-        while (!queue.isEmpty()) {
+        while(!queue.isEmpty()){
             int size = queue.size();
-            for (int i = 0; i < size; i++) {
-                int curr = queue.poll();
-                if (curr == n * n - 1) {
-                    return rolls;
+
+            for (int i=0; i<size; i++){
+                int[] elem = queue.poll();
+                int currPos = elem[0];
+                int move = elem[1];
+                
+                //If alrady reached to last index of the flattened array it means target end cell reached. 
+                if (currPos == n-1){
+                    return move;
                 }
 
-                for (int dice = 1; dice <= 6; dice++) {
-                    int next = curr + dice;
-                    if (next < n * n) {
-                        if (oneDBoard[next] != -1) {
-                            next = oneDBoard[next];
+                for (int dice=1; dice<=6; dice++){
+                    int nextPos = currPos + dice;
+                    //Valid range of position.  
+                    if (nextPos < n){
+                        //This is to jump to snake or ladder position. So, nextPos will change accordingly.
+                        if (oneDBoard[nextPos] > 0){
+                            nextPos = oneDBoard[nextPos];
                         }
-                        if (!visited[next]) {
-                            visited[next] = true;
-                            queue.offer(next);
+
+                        //Again Valid range of position.
+                        if (nextPos < n && !visited.contains(nextPos)){
+                            visited.add(nextPos);
+                            queue.offer(new int[]{nextPos, move + 1});
                         }
                     }
                 }
             }
-            rolls++;
         }
         return -1;
     }
 
     private int[] convertToOneDBoard(int[][] board) {
         int n = board.length;
-        int[] oneDBoard = new int[n * n];
-        int idx = 0;
+        int[] oneDBoard = new int[n * n + 1];
+        int idx = 1;
         boolean leftToRight = true;
         for (int i = n - 1; i >= 0; i--) {
             if (leftToRight) {
@@ -57,71 +63,4 @@ class SnakeLadder {
         }
         return oneDBoard;
     }
-
-    /**
-     * https://leetcode.com/problems/remove-invalid-parentheses/
-     * Given a string s that contains parentheses and letters, remove the minimum number of invalid parentheses to make the input string valid.
-     *
-     * Return a list of unique strings that are valid with the minimum number of removals. You may return the answer in any order.
-     *
-     *
-     *
-     * Example 1:
-     *
-     * Input: s = "()())()"
-     * Output: ["(())()","()()()"]
-     * Example 2:
-     *
-     * Input: s = "(a)())()"
-     * Output: ["(a())()","(a)()()"]
-     * This is not a stack solution.
-     */
-    public static class MakeAllValidParenthesisByRmovingMinimumInvalidParenthesis {
-        public List<String> removeInvalidParentheses(String s) {
-            List<String> res = new ArrayList<>();
-            Queue<String> que = new LinkedList<>();
-            que.add(s);
-            Set<String> visited = new HashSet<>();
-            visited.add(s);
-            boolean found = false;
-            while(!que.isEmpty()){
-                String str = que.poll();
-                if (isValid(str)){
-                    res.add(str);
-                    found = true;
-                }
-
-                // If valid strings are found, do not process deeper levels
-                if (found)
-                    continue;
-
-                for(int i=0; i<str.length(); i++){
-                    if (str.charAt(i) == '(' || str.charAt(i) == ')'){
-                        String str2 = str.substring(0,i) + str.substring(i+1);
-                        if (!visited.contains(str2)){
-                            visited.add(str2);
-                            que.add(str2);
-                        }
-                    }
-                }
-            }
-            return res;
-        }
-
-        public boolean isValid(String s){
-            int count=0;
-            for (int i=0; i<s.length(); i++){
-                if (s.charAt(i) == '('){
-                    count++;
-                }
-                else if (s.charAt(i) == ')'){
-                    count--;
-                    if (count < 0)
-                        return false;
-                }
-            }
-            return count == 0;
-        }
-    }
 }
-
